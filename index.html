@@ -6,24 +6,25 @@
   <title>Yury Kirpichev · LLMs, ML Systems, RL</title>
   <meta name="description" content="Yury Kirpichev: writing and measured studies on large language models, ML systems, RL optimization, and agentic AI.">
   <meta property="og:title" content="Yury Kirpichev · LLMs, ML Systems, RL">
-  <meta property="og:description" content="A free book on engineering LLMs, plus measured TPU studies on RL rollouts and LLM serving.">
+  <meta property="og:description" content="A free book on engineering LLMs, plus measured studies on TPU serving, RL rollouts, VLM evaluation, and Blackwell kernels.">
   <meta property="og:url" content="https://ykirpichev.github.io/">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b1020'/><text x='50%' y='56%' text-anchor='middle' dominant-baseline='middle' font-family='Menlo,monospace' font-size='28' font-weight='700' fill='%237dd3fc'>YK</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23222a3b'/><text x='50%' y='56%' text-anchor='middle' dominant-baseline='middle' font-family='Menlo,monospace' font-size='28' font-weight='700' fill='%237dd3fc'>YK</text></svg>">
   <style>
     :root {
-      --bg: #0a0e1a;
-      --bg-2: #0f1526;
-      --card: #121a2e;
-      --card-hover: #17213a;
-      --line: #1f2a44;
-      --text: #e6eaf2;
-      --muted: #94a0b8;
-      --dim: #6b7690;
+      --bg: #1b2130;
+      --bg-2: #212939;
+      --card: #262f43;
+      --card-hover: #2c3650;
+      --line: #36425c;
+      --line-hover: #4a5878;
+      --text: #f0f3f9;
+      --muted: #b6c0d3;
+      --dim: #8f9ab1;
       --sky: #7dd3fc;
-      --violet: #a78bfa;
-      --emerald: #6ee7b7;
-      --amber: #fcd34d;
-      --rose: #fda4af;
+      --violet: #b4a0fc;
+      --emerald: #7eeac2;
+      --amber: #fcd76a;
+      --rose: #fdb0ba;
       --radius: 16px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
@@ -33,8 +34,8 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
       background:
-        radial-gradient(900px 500px at 85% -10%, rgba(167,139,250,.16), transparent 60%),
-        radial-gradient(800px 500px at -10% 10%, rgba(125,211,252,.12), transparent 60%),
+        radial-gradient(900px 520px at 85% -10%, rgba(180,160,252,.18), transparent 60%),
+        radial-gradient(800px 520px at -10% 10%, rgba(125,211,252,.14), transparent 60%),
         var(--bg);
       color: var(--text);
       line-height: 1.6;
@@ -46,7 +47,7 @@
     nav {
       position: sticky; top: 0; z-index: 10;
       backdrop-filter: blur(12px);
-      background: rgba(10,14,26,.72);
+      background: rgba(27,33,48,.78);
       border-bottom: 1px solid var(--line);
     }
     nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
@@ -65,15 +66,15 @@
       background: linear-gradient(90deg, var(--sky), var(--violet));
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-    .lead { font-size: 19px; color: var(--muted); max-width: 680px; margin: 0 0 32px; }
+    .lead { font-size: 19px; color: var(--muted); max-width: 700px; margin: 0 0 32px; }
     .cta { display: flex; flex-wrap: wrap; gap: 12px; }
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 11px 18px; border-radius: 10px; font-size: 15px; font-weight: 600;
       border: 1px solid var(--line); background: var(--card); transition: .15s;
     }
-    .btn:hover { border-color: #33426a; background: var(--card-hover); }
-    .btn.primary { background: linear-gradient(90deg, #38bdf8, #8b5cf6); border: 0; color: #0a0e1a; }
+    .btn:hover { border-color: var(--line-hover); background: var(--card-hover); }
+    .btn.primary { background: linear-gradient(90deg, #4cc4f5, #9a7bf7); border: 0; color: #141a26; }
     .btn.primary:hover { filter: brightness(1.08); }
     .btn svg { width: 16px; height: 16px; }
 
@@ -81,17 +82,20 @@
     .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
     h2 { font-size: 28px; margin: 0; letter-spacing: -.01em; }
     .section-head p { margin: 0; color: var(--dim); font-size: 14px; }
+    .subhead { font-size: 13px; font-family: var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin: 40px 0 16px; }
 
     .card {
       position: relative; display: block;
       background: linear-gradient(180deg, var(--card), var(--bg-2));
       border: 1px solid var(--line); border-radius: var(--radius);
       padding: 28px; transition: transform .15s, border-color .15s;
+      box-shadow: 0 10px 30px -18px rgba(0,0,0,.5);
     }
-    a.card:hover { transform: translateY(-3px); border-color: #33426a; }
+    a.card:hover { transform: translateY(-3px); border-color: var(--line-hover); }
     .tag {
       display: inline-block; font-family: var(--mono); font-size: 12px;
       padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
+      background: rgba(255,255,255,.02);
     }
     .card h3 { font-size: 22px; margin: 14px 0 8px; line-height: 1.25; }
     .card p { color: var(--muted); margin: 0; }
@@ -104,11 +108,11 @@
     .cover {
       aspect-ratio: 3 / 4; border-radius: 10px; padding: 22px 18px;
       background:
-        linear-gradient(160deg, rgba(125,211,252,.25), transparent 50%),
-        linear-gradient(340deg, rgba(167,139,250,.35), transparent 55%),
-        #0d1424;
-      border: 1px solid #2a3758;
-      box-shadow: 0 20px 50px -20px rgba(139,92,246,.45);
+        linear-gradient(160deg, rgba(125,211,252,.3), transparent 50%),
+        linear-gradient(340deg, rgba(180,160,252,.4), transparent 55%),
+        #1a2133;
+      border: 1px solid #45537a;
+      box-shadow: 0 20px 50px -20px rgba(154,123,247,.5);
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .cover .mark { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--sky); }
@@ -125,7 +129,7 @@
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
     .metric {
-      background: rgba(255,255,255,.02); border: 1px solid var(--line);
+      background: rgba(255,255,255,.035); border: 1px solid var(--line);
       border-radius: 12px; padding: 12px 14px;
     }
     .metric b { display: block; font-size: 22px; line-height: 1.2; }
@@ -133,18 +137,23 @@
     .c-sky { color: var(--sky); } .c-violet { color: var(--violet); }
     .c-emerald { color: var(--emerald); } .c-amber { color: var(--amber); } .c-rose { color: var(--rose); }
 
+    .project { padding: 24px; }
+    .project h3 { font-size: 18px; margin-top: 12px; }
+    .project p { font-size: 15px; }
+    .project .more { margin-top: 14px; }
+
     .interests { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .interest { padding: 26px; }
     .interest .icon {
       width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
-      background: rgba(255,255,255,.04); border: 1px solid var(--line);
+      background: rgba(255,255,255,.05); border: 1px solid var(--line);
     }
     .interest .icon svg { width: 20px; height: 20px; }
     .interest h3 { margin-top: 14px; font-size: 20px; }
     .links { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 6px; font-size: 14px; }
     .links a { color: var(--muted); display: flex; gap: 10px; align-items: baseline; }
     .links a:hover { color: var(--text); }
-    .links .n { font-family: var(--mono); font-size: 12px; color: var(--dim); min-width: 46px; }
+    .links .n { font-family: var(--mono); font-size: 12px; color: var(--dim); min-width: 52px; }
 
     footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--dim); font-size: 14px; }
     footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
@@ -167,6 +176,7 @@
     <a class="brand" href="#">ykirpichev<span>.github.io</span></a>
     <ul>
       <li><a href="#work">Published work</a></li>
+      <li><a href="#projects">Projects</a></li>
       <li><a href="#interests">Interests</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -178,8 +188,8 @@
     <div class="eyebrow">LLMs · ML Systems · RL · Agentic AI</div>
     <h1>Yury Kirpichev<br><span class="grad">engineering large language models.</span></h1>
     <p class="lead">
-      I write about and measure how LLMs are trained, served, and optimized, from attention kernels
-      and TPU pods to RL rollouts and agent loops. Below are a free book and two reproducible studies,
+      I write about and measure how LLMs are trained, served, and optimized, from Blackwell kernels
+      and TPU pods to RL rollouts and agent loops. Below are a free book and four reproducible studies,
       each with the full setup, numbers, and costs.
     </p>
     <div class="cta">
@@ -241,9 +251,10 @@
         </div>
       </div>
 
+      <div class="subhead">Studies</div>
       <div class="grid2">
         <a class="card" href="https://ykirpichev.github.io/async-vs-sync-rl-tpu/">
-          <span class="tag">Study · RL optimization · TPU v6e</span>
+          <span class="tag">RL optimization · TPU v6e</span>
           <h3>Async vs sync RL rollouts on TPU v6e</h3>
           <p>
             A controlled GRPO comparison on Qwen3.5-2B / AIME. Overlapping generation and learning
@@ -259,7 +270,7 @@
         </a>
 
         <a class="card" href="https://ykirpichev.github.io/tpu-vs-h100-llm-bench/">
-          <span class="tag">Study · LLM serving · vLLM</span>
+          <span class="tag">LLM serving · vLLM · TPU vs GPU</span>
           <h3>TPU v6e vs H100: serving Cosmos3-Super and Qwen3.8-27B</h3>
           <p>
             A reproducible vLLM benchmark of two vision-language models on a 4-chip TPU v6e and a
@@ -272,6 +283,68 @@
             <div class="metric"><b class="c-amber">≈ $6.70</b><span>total study spend</span></div>
           </div>
           <div class="more">Read the study →</div>
+        </a>
+
+        <a class="card" href="https://github.com/ykirpichev/cosmos-reason2-lane-eval/blob/main/docs/summary_report.md">
+          <span class="tag">VLM evaluation · Cosmos 3 · Cosmos 2 · Qwen</span>
+          <h3>Cosmos 3 vs Cosmos 2 vs Qwen on ego-lane behavior</h3>
+          <p>
+            Can a video reasoning model tell from a dashcam clip whether the car kept its lane, changed
+            lanes, or wandered? Same pipeline, prompt, and input ladder across three models.
+          </p>
+          <div class="metrics">
+            <div class="metric"><b class="c-emerald">0.56 → 0.93</b><span>Cosmos3-Super accuracy after tuning</span></div>
+            <div class="metric"><b class="c-sky">85%</b><span>lane crossings caught vs 46% and 38%</span></div>
+            <div class="metric"><b class="c-violet">ROI crop + zoom</b><span>beats uniform upscale at equal tokens</span></div>
+            <div class="metric"><b class="c-amber">1 → 4 fps</b><span>doubles Cosmos 2 lane-change recall</span></div>
+          </div>
+          <div class="more">Read the report →</div>
+        </a>
+
+        <a class="card" href="https://github.com/ykirpichev/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/blob/main/final_writeup.md">
+          <span class="tag">GPU kernels · B200 · MLSys 2026</span>
+          <h3>DeepSeek sparse attention kernels on Blackwell</h3>
+          <p>
+            Agent-assisted CUDA kernels for the FlashInfer AI Kernel Generation Contest: an FP8 top-k
+            indexer and a sparse MLA attention kernel for B200 (sm_100a).
+          </p>
+          <div class="metrics">
+            <div class="metric"><b class="c-emerald">28.96×</b><span>avg speedup vs FlashInfer baselines</span></div>
+            <div class="metric"><b class="c-sky">151 / 151</b><span>contest workloads passed</span></div>
+            <div class="metric"><b class="c-violet">2.40 μs</b><span>p50 top-k indexer latency (FP8)</span></div>
+            <div class="metric"><b class="c-amber">14.18×</b><span>sparse attention vs FlashInfer</span></div>
+          </div>
+          <div class="more">Read the write-up →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Projects &amp; experiments</h2>
+        <p>Smaller builds and environments.</p>
+      </div>
+      <div class="grid2">
+        <a class="card project" href="https://github.com/ykirpichev/road-traffic-simulator-env">
+          <span class="tag">RL environment · OpenEnv · GRPO</span>
+          <h3>San Francisco traffic simulator for RL</h3>
+          <p>
+            An OpenEnv environment on the OpenStreetMap road network of San Francisco: one controlled car
+            among 2,000 background agents, with visual observations. Includes GRPO training of
+            Qwen3-VL-2B and a Dijkstra baseline.
+          </p>
+          <div class="more">View on GitHub →</div>
+        </a>
+        <a class="card project" href="https://github.com/ykirpichev/jetson-nemoclaw-openshell">
+          <span class="tag">Agentic AI · edge · Jetson Orin</span>
+          <h3>NemoClaw / OpenShell agents on Jetson</h3>
+          <p>
+            Scripts and a Cursor skill for running NVIDIA's NemoClaw agent sandbox on Jetson Orin with a
+            local Ollama model, fixing the Tegra networking and model-binding issues the stock installer hits.
+          </p>
+          <div class="more">View on GitHub →</div>
         </a>
       </div>
     </div>
@@ -293,8 +366,8 @@
           <p>How a decoder works, what training and post-training change, and how to evaluate a change to the model.</p>
           <ul class="links">
             <li><a href="https://ykirpichev.github.io/llm-book-site/03-inside-a-transformer-decoder.html"><span class="n">Ch 03</span>Inside a transformer decoder</a></li>
-            <li><a href="https://ykirpichev.github.io/llm-book-site/14-distillation-kl-divergence-and-model-sizing.html"><span class="n">Ch 14</span>Distillation, KL divergence, and model sizing</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/16-post-training-and-alignment.html"><span class="n">Ch 16</span>Post-training and alignment</a></li>
+            <li><a href="https://github.com/ykirpichev/cosmos-reason2-lane-eval/blob/main/docs/summary_report.md"><span class="n">Study</span>Cosmos 3 vs Cosmos 2 vs Qwen lane-behavior eval</a></li>
           </ul>
         </div>
 
@@ -306,9 +379,9 @@
           <p>Inference engines, KV caches, kernels, accelerators, and the economics of serving at scale.</p>
           <ul class="links">
             <li><a href="https://ykirpichev.github.io/tpu-vs-h100-llm-bench/"><span class="n">Study</span>TPU v6e vs H100 serving benchmark</a></li>
+            <li><a href="https://github.com/ykirpichev/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/blob/main/final_writeup.md"><span class="n">Study</span>Sparse attention kernels on B200</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/20-kv-cache-paging-and-prefix-reuse.html"><span class="n">Ch 20</span>KV cache, paging, and prefix reuse</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/32-flashattention-and-io-aware-exact-attention.html"><span class="n">Ch 32</span>FlashAttention and IO-aware exact attention</a></li>
-            <li><a href="https://ykirpichev.github.io/llm-book-site/43-distributed-inference-and-stateful-placement.html"><span class="n">Ch 43</span>Distributed inference and stateful placement</a></li>
           </ul>
         </div>
 
@@ -320,6 +393,7 @@
           <p>Making RL for reasoning faster: async rollouts, policy staleness, and keeping generators busy.</p>
           <ul class="links">
             <li><a href="https://ykirpichev.github.io/async-vs-sync-rl-tpu/"><span class="n">Study</span>Async vs sync GRPO rollouts on TPU v6e</a></li>
+            <li><a href="https://github.com/ykirpichev/road-traffic-simulator-env"><span class="n">Project</span>SF traffic simulator RL environment</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/17-reinforcement-learning-for-reasoning-and-tool-use.html"><span class="n">Ch 17</span>RL for reasoning and tool use</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/44-distributed-reinforcement-learning-and-policy-freshness.html"><span class="n">Ch 44</span>Distributed RL and policy freshness</a></li>
           </ul>
@@ -330,11 +404,12 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4M12 11l-5.5 6.5M12 11l5.5 6.5"/></svg>
           </div>
           <h3>Agentic AI</h3>
-          <p>Bounded agent loops, tool use, retrieval, and how to evaluate systems that act rather than just answer.</p>
+          <p>Bounded agent loops, tool use, agent-assisted engineering, and how to evaluate systems that act rather than just answer.</p>
           <ul class="links">
-            <li><a href="https://ykirpichev.github.io/llm-book-site/48-rag-vector-search-and-evaluation-pipelines.html"><span class="n">Ch 48</span>RAG, vector search, and evaluation pipelines</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/49-building-and-evaluating-a-bounded-agent-loop.html"><span class="n">Ch 49</span>Building and evaluating a bounded agent loop</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/58-multimodal-and-tool-using-systems.html"><span class="n">Ch 58</span>Multimodal and tool-using systems</a></li>
+            <li><a href="https://github.com/ykirpichev/jetson-nemoclaw-openshell"><span class="n">Project</span>NemoClaw / OpenShell agents on Jetson</a></li>
+            <li><a href="https://github.com/ykirpichev/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/blob/main/final_writeup.md"><span class="n">Study</span>Agent-assisted kernel engineering on B200</a></li>
           </ul>
         </div>
       </div>
