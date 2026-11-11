@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yury Kirpichev · LLMs, ML Systems, RL</title>
+  <meta name="description" content="Yury Kirpichev: writing and measured studies on large language models, ML systems, RL optimization, and agentic AI.">
+  <meta property="og:title" content="Yury Kirpichev · LLMs, ML Systems, RL">
+  <meta property="og:description" content="A free book on engineering LLMs, plus measured TPU studies on RL rollouts and LLM serving.">
+  <meta property="og:url" content="https://ykirpichev.github.io/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b1020'/><text x='50%' y='56%' text-anchor='middle' dominant-baseline='middle' font-family='Menlo,monospace' font-size='28' font-weight='700' fill='%237dd3fc'>YK</text></svg>">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg-2: #0f1526;
+      --card: #121a2e;
+      --card-hover: #17213a;
+      --line: #1f2a44;
+      --text: #e6eaf2;
+      --muted: #94a0b8;
+      --dim: #6b7690;
+      --sky: #7dd3fc;
+      --violet: #a78bfa;
+      --emerald: #6ee7b7;
+      --amber: #fcd34d;
+      --rose: #fda4af;
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(900px 500px at 85% -10%, rgba(167,139,250,.16), transparent 60%),
+        radial-gradient(800px 500px at -10% 10%, rgba(125,211,252,.12), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(12px);
+      background: rgba(10,14,26,.72);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .brand { font-family: var(--mono); font-weight: 700; letter-spacing: .02em; }
+    .brand span { color: var(--sky); }
+    nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; font-size: 14px; color: var(--muted); }
+    nav ul a:hover { color: var(--text); }
+
+    header.hero { padding: 96px 0 72px; }
+    .eyebrow {
+      font-family: var(--mono); font-size: 13px; color: var(--sky);
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px;
+    }
+    h1 { font-size: clamp(40px, 6vw, 64px); line-height: 1.05; margin: 0 0 20px; letter-spacing: -.02em; }
+    h1 .grad {
+      background: linear-gradient(90deg, var(--sky), var(--violet));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { font-size: 19px; color: var(--muted); max-width: 680px; margin: 0 0 32px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 18px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      border: 1px solid var(--line); background: var(--card); transition: .15s;
+    }
+    .btn:hover { border-color: #33426a; background: var(--card-hover); }
+    .btn.primary { background: linear-gradient(90deg, #38bdf8, #8b5cf6); border: 0; color: #0a0e1a; }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .btn svg { width: 16px; height: 16px; }
+
+    section { padding: 56px 0; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    h2 { font-size: 28px; margin: 0; letter-spacing: -.01em; }
+    .section-head p { margin: 0; color: var(--dim); font-size: 14px; }
+
+    .card {
+      position: relative; display: block;
+      background: linear-gradient(180deg, var(--card), var(--bg-2));
+      border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 28px; transition: transform .15s, border-color .15s;
+    }
+    a.card:hover { transform: translateY(-3px); border-color: #33426a; }
+    .tag {
+      display: inline-block; font-family: var(--mono); font-size: 12px;
+      padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
+    }
+    .card h3 { font-size: 22px; margin: 14px 0 8px; line-height: 1.25; }
+    .card p { color: var(--muted); margin: 0; }
+    .more { margin-top: 18px; font-size: 14px; font-weight: 600; color: var(--sky); }
+
+    .book {
+      display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: center;
+      padding: 36px; margin-bottom: 20px;
+    }
+    .cover {
+      aspect-ratio: 3 / 4; border-radius: 10px; padding: 22px 18px;
+      background:
+        linear-gradient(160deg, rgba(125,211,252,.25), transparent 50%),
+        linear-gradient(340deg, rgba(167,139,250,.35), transparent 55%),
+        #0d1424;
+      border: 1px solid #2a3758;
+      box-shadow: 0 20px 50px -20px rgba(139,92,246,.45);
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .cover .mark { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--sky); }
+    .cover .t { font-size: 20px; font-weight: 700; line-height: 1.15; }
+    .cover .a { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+    .book h3 { font-size: 28px; margin-top: 12px; }
+    .stats { display: flex; flex-wrap: wrap; gap: 28px; margin: 22px 0; }
+    .stat b { display: block; font-size: 26px; line-height: 1; }
+    .stat span { font-size: 13px; color: var(--dim); }
+    .parts { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+    .parts .tag { font-size: 11.5px; }
+    .book .cta .btn { font-size: 14px; padding: 9px 15px; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+    .metric {
+      background: rgba(255,255,255,.02); border: 1px solid var(--line);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .metric b { display: block; font-size: 22px; line-height: 1.2; }
+    .metric span { font-size: 12.5px; color: var(--dim); }
+    .c-sky { color: var(--sky); } .c-violet { color: var(--violet); }
+    .c-emerald { color: var(--emerald); } .c-amber { color: var(--amber); } .c-rose { color: var(--rose); }
+
+    .interests { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .interest { padding: 26px; }
+    .interest .icon {
+      width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+      background: rgba(255,255,255,.04); border: 1px solid var(--line);
+    }
+    .interest .icon svg { width: 20px; height: 20px; }
+    .interest h3 { margin-top: 14px; font-size: 20px; }
+    .links { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 6px; font-size: 14px; }
+    .links a { color: var(--muted); display: flex; gap: 10px; align-items: baseline; }
+    .links a:hover { color: var(--text); }
+    .links .n { font-family: var(--mono); font-size: 12px; color: var(--dim); min-width: 46px; }
+
+    footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--dim); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    footer a:hover { color: var(--text); }
+    footer .social { display: flex; gap: 20px; }
+
+    @media (max-width: 820px) {
+      .book { grid-template-columns: 1fr; }
+      .cover { max-width: 200px; }
+      .grid2, .interests { grid-template-columns: 1fr; }
+      nav ul { display: none; }
+      header.hero { padding: 64px 0 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#">ykirpichev<span>.github.io</span></a>
+    <ul>
+      <li><a href="#work">Published work</a></li>
+      <li><a href="#interests">Interests</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">LLMs · ML Systems · RL · Agentic AI</div>
+    <h1>Yury Kirpichev<br><span class="grad">engineering large language models.</span></h1>
+    <p class="lead">
+      I write about and measure how LLMs are trained, served, and optimized, from attention kernels
+      and TPU pods to RL rollouts and agent loops. Below are a free book and two reproducible studies,
+      each with the full setup, numbers, and costs.
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="https://ykirpichev.github.io/llm-book-site/">Read the book →</a>
+      <a class="btn" href="https://github.com/ykirpichev">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a class="btn" href="https://www.linkedin.com/in/ykirpichev/">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.15C0 .52.52 0 1.17 0h13.66C15.48 0 16 .52 16 1.15v13.7c0 .63-.52 1.15-1.17 1.15H1.17C.52 16 0 15.48 0 14.85V1.15zm4.94 12.24V6.17H2.54v7.22h2.4zM3.74 5.18c.84 0 1.36-.55 1.36-1.25-.02-.71-.52-1.25-1.34-1.25-.82 0-1.36.54-1.36 1.25 0 .7.52 1.25 1.33 1.25h.01zm4.91 8.21V9.36c0-.22.02-.43.08-.58.17-.43.57-.88 1.23-.88.87 0 1.22.66 1.22 1.64v3.85h2.4V9.25c0-2.22-1.18-3.25-2.76-3.25-1.3 0-1.88.72-2.2 1.22V6.17h-2.4c.03.68 0 7.22 0 7.22h2.43z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Published work</h2>
+        <p>Everything here is free to read and reproducible.</p>
+      </div>
+
+      <div class="card book">
+        <a class="cover" href="https://ykirpichev.github.io/llm-book-site/" aria-label="Open the book">
+          <div class="mark">E·LLM</div>
+          <div class="t">Engineering Large Language Models</div>
+          <div class="a">Yury Kirpichev · 2026</div>
+        </a>
+        <div>
+          <span class="tag">Book · public edition, October 2026</span>
+          <h3>Engineering Large Language Models</h3>
+          <p>
+            A systems guide to training, inference, accelerators, distributed infrastructure, and the
+            engineering decisions that connect them, with worked examples, diagrams, and runnable code.
+          </p>
+          <div class="stats">
+            <div class="stat"><b class="c-sky">68</b><span>chapters</span></div>
+            <div class="stat"><b class="c-violet">9</b><span>parts</span></div>
+            <div class="stat"><b class="c-emerald">56</b><span>original diagrams</span></div>
+          </div>
+          <div class="parts">
+            <span class="tag">Understanding an LM system</span>
+            <span class="tag">Training, data &amp; adaptation</span>
+            <span class="tag">Inference systems</span>
+            <span class="tag">CUDA &amp; accelerators</span>
+            <span class="tag">Distributed ML</span>
+            <span class="tag">Application architecture</span>
+            <span class="tag">Architectural alternatives</span>
+            <span class="tag">Decisions &amp; operations</span>
+            <span class="tag">Field reference</span>
+          </div>
+          <div class="cta">
+            <a class="btn primary" href="https://ykirpichev.github.io/llm-book-site/">Start reading →</a>
+            <a class="btn" href="https://ykirpichev.github.io/llm-book-site/engineering-large-language-models.pdf">Download PDF</a>
+            <a class="btn" href="https://github.com/ykirpichev/llm-book-site">Source</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <a class="card" href="https://ykirpichev.github.io/async-vs-sync-rl-tpu/">
+          <span class="tag">Study · RL optimization · TPU v6e</span>
+          <h3>Async vs sync RL rollouts on TPU v6e</h3>
+          <p>
+            A controlled GRPO comparison on Qwen3.5-2B / AIME. Overlapping generation and learning
+            with bounded staleness cuts wall-clock time without a measurable quality gap.
+          </p>
+          <div class="metrics">
+            <div class="metric"><b class="c-emerald">1.61×</b><span>faster to 40 steps (53 vs 85 min)</span></div>
+            <div class="metric"><b class="c-sky">1.7%</b><span>rollout idle, down from 39.5%</span></div>
+            <div class="metric"><b class="c-violet">≈ equal</b><span>pass@1: 8.96% async vs 9.38% sync</span></div>
+            <div class="metric"><b class="c-amber">≈ $22</b><span>total compute cost</span></div>
+          </div>
+          <div class="more">Read the study →</div>
+        </a>
+
+        <a class="card" href="https://ykirpichev.github.io/tpu-vs-h100-llm-bench/">
+          <span class="tag">Study · LLM serving · vLLM</span>
+          <h3>TPU v6e vs H100: serving Cosmos3-Super and Qwen3.8-27B</h3>
+          <p>
+            A reproducible vLLM benchmark of two vision-language models on a 4-chip TPU v6e and a
+            single H100: throughput, latency, cost per token, and output agreement.
+          </p>
+          <div class="metrics">
+            <div class="metric"><b class="c-emerald">828 tok/s</b><span>TPU v6e-4 peak vs 431 on H100 (BF16)</span></div>
+            <div class="metric"><b class="c-sky">$0.90 / 1M</b><span>output tokens on v6e Spot vs $2.54</span></div>
+            <div class="metric"><b class="c-violet">92.9%</b><span>field agreement with H100 BF16</span></div>
+            <div class="metric"><b class="c-amber">≈ $6.70</b><span>total study spend</span></div>
+          </div>
+          <div class="more">Read the study →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="interests">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Interests</h2>
+        <p>Where to start reading for each topic.</p>
+      </div>
+
+      <div class="interests">
+        <div class="card interest">
+          <div class="icon c-sky">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>
+          </div>
+          <h3>Large language models</h3>
+          <p>How a decoder works, what training and post-training change, and how to evaluate a change to the model.</p>
+          <ul class="links">
+            <li><a href="https://ykirpichev.github.io/llm-book-site/03-inside-a-transformer-decoder.html"><span class="n">Ch 03</span>Inside a transformer decoder</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/14-distillation-kl-divergence-and-model-sizing.html"><span class="n">Ch 14</span>Distillation, KL divergence, and model sizing</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/16-post-training-and-alignment.html"><span class="n">Ch 16</span>Post-training and alignment</a></li>
+          </ul>
+        </div>
+
+        <div class="card interest">
+          <div class="icon c-violet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+          </div>
+          <h3>ML systems</h3>
+          <p>Inference engines, KV caches, kernels, accelerators, and the economics of serving at scale.</p>
+          <ul class="links">
+            <li><a href="https://ykirpichev.github.io/tpu-vs-h100-llm-bench/"><span class="n">Study</span>TPU v6e vs H100 serving benchmark</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/20-kv-cache-paging-and-prefix-reuse.html"><span class="n">Ch 20</span>KV cache, paging, and prefix reuse</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/32-flashattention-and-io-aware-exact-attention.html"><span class="n">Ch 32</span>FlashAttention and IO-aware exact attention</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/43-distributed-inference-and-stateful-placement.html"><span class="n">Ch 43</span>Distributed inference and stateful placement</a></li>
+          </ul>
+        </div>
+
+        <div class="card interest">
+          <div class="icon c-emerald">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+          </div>
+          <h3>RL optimization</h3>
+          <p>Making RL for reasoning faster: async rollouts, policy staleness, and keeping generators busy.</p>
+          <ul class="links">
+            <li><a href="https://ykirpichev.github.io/async-vs-sync-rl-tpu/"><span class="n">Study</span>Async vs sync GRPO rollouts on TPU v6e</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/17-reinforcement-learning-for-reasoning-and-tool-use.html"><span class="n">Ch 17</span>RL for reasoning and tool use</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/44-distributed-reinforcement-learning-and-policy-freshness.html"><span class="n">Ch 44</span>Distributed RL and policy freshness</a></li>
+          </ul>
+        </div>
+
+        <div class="card interest">
+          <div class="icon c-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4M12 11l-5.5 6.5M12 11l5.5 6.5"/></svg>
+          </div>
+          <h3>Agentic AI</h3>
+          <p>Bounded agent loops, tool use, retrieval, and how to evaluate systems that act rather than just answer.</p>
+          <ul class="links">
+            <li><a href="https://ykirpichev.github.io/llm-book-site/49-building-and-evaluating-a-bounded-agent-loop.html"><span class="n">Ch 49</span>Building and evaluating a bounded agent loop</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/58-multimodal-and-tool-using-systems.html"><span class="n">Ch 58</span>Multimodal and tool-using systems</a></li>
+            <li><a href="https://ykirpichev.github.io/llm-book-site/48-rag-vector-search-and-evaluation-pipelines.html"><span class="n">Ch 48</span>RAG, vector search, and evaluation pipelines</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div>© 2026 Yury Kirpichev</div>
+    <div class="social">
+      <a href="https://github.com/ykirpichev">GitHub</a>
+      <a href="https://www.linkedin.com/in/ykirpichev/">LinkedIn</a>
+      <a href="https://ykirpichev.github.io/llm-book-site/">The book</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
