@@ -193,7 +193,7 @@
     <h1>Yury Kirpichev<br><span class="grad">engineering large language models.</span></h1>
     <p class="lead">
       I write about and measure how LLMs are trained, served, and optimized, from Blackwell kernels
-      and TPU pods to RL rollouts and agent loops. Below are a free book and five reproducible studies,
+      and TPU pods to RL rollouts and agent loops. Below are a free book and six reproducible studies,
       each with the full setup, numbers, and costs.
     </p>
     <div class="cta">
@@ -336,6 +336,22 @@
           </div>
           <div class="more">Read the comparison →</div>
         </a>
+
+        <a class="card" href="https://ykirpichev.github.io/dsa_sparse_attention_h16_ckv512_kpe64_topk2048_ps64/frameworks/">
+          <span class="tag">GPU kernels · CUDA, Triton, TileLang, ThunderKittens · B200</span>
+          <h3>The same sparse attention kernel in four languages</h3>
+          <p>
+            The contest sparse MLA, written in CUDA, Triton, TileLang, and ThunderKittens, timed with
+            the same CUPTI span on all 23 workloads.
+          </p>
+          <div class="metrics">
+            <div class="metric"><b class="c-emerald">7.88 μs</b><span>Triton fused geomean, 0.37× CUDA</span></div>
+            <div class="metric"><b class="c-sky">21.1 μs</b><span>CUDA submission geomean</span></div>
+            <div class="metric"><b class="c-violet">76.3 μs</b><span>ThunderKittens geomean</span></div>
+            <div class="metric"><b class="c-amber">95.9 μs</b><span>TileLang 0.1.15 geomean</span></div>
+          </div>
+          <div class="more">Read the comparison →</div>
+        </a>
       </div>
     </div>
   </section>
@@ -401,6 +417,7 @@
             <li><a href="https://ykirpichev.github.io/tpu-vs-h100-llm-bench/"><span class="n">Study</span>TPU v6e vs H100 serving benchmark</a></li>
             <li><a href="https://github.com/ykirpichev/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/blob/main/final_writeup.md"><span class="n">Study</span>Sparse attention kernels on B200</a></li>
             <li><a href="https://ykirpichev.github.io/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/frameworks/"><span class="n">Study</span>The same FP8 top-K indexer in four languages</a></li>
+            <li><a href="https://ykirpichev.github.io/dsa_sparse_attention_h16_ckv512_kpe64_topk2048_ps64/frameworks/"><span class="n">Study</span>The same sparse attention kernel in four languages</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/20-kv-cache-paging-and-prefix-reuse.html"><span class="n">Ch 20</span>KV cache, paging, and prefix reuse</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/32-flashattention-and-io-aware-exact-attention.html"><span class="n">Ch 32</span>FlashAttention and IO-aware exact attention</a></li>
           </ul>
