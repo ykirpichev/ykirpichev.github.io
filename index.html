@@ -317,18 +317,18 @@
           <div class="more">Read the write-up →</div>
         </a>
 
-        <a class="card" href="https://ykirpichev.github.io/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/triton-vs-cuda/">
-          <span class="tag">GPU kernels · Triton vs CUDA · B200</span>
-          <h3>The same FP8 top-K indexer in Triton and CUDA</h3>
+        <a class="card" href="https://ykirpichev.github.io/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/frameworks/">
+          <span class="tag">GPU kernels · CUDA, Triton, TileLang, ThunderKittens · B200</span>
+          <h3>The same FP8 top-K indexer in four languages</h3>
           <p>
-            The hand-tuned Blackwell indexer rewritten in Triton and benchmarked side by side on all
-            128 contest workloads, with per-kernel timing and the compiler change that flips the result.
+            One plan, four implementations, and the B200 numbers for each. The walkthrough links the
+            workload-by-workload Triton report.
           </p>
           <div class="metrics">
-            <div class="metric"><b class="c-emerald">6.78 μs</b><span>Triton 3.9.0 mean vs 8.06 μs CUDA</span></div>
-            <div class="metric"><b class="c-sky">128 / 128</b><span>workloads passed by both</span></div>
-            <div class="metric"><b class="c-violet">190 lines</b><span>of Triton vs 1,246 of CUDA</span></div>
-            <div class="metric"><b class="c-amber">0.81×</b><span>fast-path latency vs CUDA, all 69</span></div>
+            <div class="metric"><b class="c-emerald">6.78 μs</b><span>Triton 3.9.0 mean, 128 workloads</span></div>
+            <div class="metric"><b class="c-sky">8.00 μs</b><span>CUDA mean on the same suite</span></div>
+            <div class="metric"><b class="c-violet">17.5 μs</b><span>ThunderKittens, batch 16, ~48 pages</span></div>
+            <div class="metric"><b class="c-amber">28.5 μs</b><span>TileLang on that same shape</span></div>
           </div>
           <div class="more">Read the comparison →</div>
         </a>
