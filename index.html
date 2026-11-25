@@ -171,6 +171,20 @@
     .links a:hover { color: var(--text); }
     .links .n { font-family: var(--mono); font-size: 12px; color: var(--dim); min-width: 52px; }
 
+    .fold > summary {
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer; list-style: none;
+      font-family: var(--mono); font-size: 13px; color: var(--sky);
+      padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.02);
+    }
+    .fold > summary::-webkit-details-marker { display: none; }
+    .fold > summary::before { content: "▸"; transition: transform .15s; }
+    .fold[open] > summary::before { transform: rotate(90deg); }
+    .fold > summary:hover { border-color: var(--line-hover); color: var(--text); }
+    .fold[open] > summary { margin-bottom: 20px; }
+    .book .fold { margin-bottom: 22px; }
+    .book .fold[open] > summary { margin-bottom: 12px; }
+    .tag { max-width: 100%; }
+
     footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--dim); font-size: 14px; }
     footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
     footer a:hover { color: var(--text); }
@@ -194,9 +208,10 @@
   <div class="wrap">
     <a class="brand" href="#">ykirpichev<span>.github.io</span></a>
     <ul>
-      <li><a href="#work">Published work</a></li>
+      <li><a href="#book">Book</a></li>
+      <li><a href="#studies">Studies</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#interests">Interests</a></li>
+      <li><a href="#interests">Reading guide</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
@@ -208,7 +223,7 @@
     <h1>Yury Kirpichev<br><span class="grad">engineering large language models.</span></h1>
     <p class="lead">
       I write about and measure how LLMs are trained, served, and optimized, from Blackwell kernels
-      and TPU pods to RL rollouts and agent loops. Below are a free book and six reproducible studies,
+      and TPU pods to RL rollouts and agent loops. Below are a free book and seven reproducible studies,
       each with the full setup, numbers, and costs.
     </p>
     <div class="cta">
@@ -233,7 +248,7 @@
         <p>Everything here is free to read and reproducible.</p>
       </div>
 
-      <div class="card book">
+      <div class="card book" id="book">
         <a class="cover" href="https://ykirpichev.github.io/llm-book-site/" aria-label="Open the book">
           <div class="mark">E·LLM</div>
           <div class="t">Engineering Large Language Models</div>
@@ -251,17 +266,20 @@
             <div class="stat"><b class="c-violet">9</b><span>parts</span></div>
             <div class="stat"><b class="c-emerald">56</b><span>original diagrams</span></div>
           </div>
-          <div class="parts">
-            <span class="tag">Understanding an LM system</span>
-            <span class="tag">Training, data &amp; adaptation</span>
-            <span class="tag">Inference systems</span>
-            <span class="tag">CUDA &amp; accelerators</span>
-            <span class="tag">Distributed ML</span>
-            <span class="tag">Application architecture</span>
-            <span class="tag">Architectural alternatives</span>
-            <span class="tag">Decisions &amp; operations</span>
-            <span class="tag">Field reference</span>
-          </div>
+          <details class="fold">
+            <summary>What's inside: 9 parts</summary>
+            <div class="parts">
+              <span class="tag">Understanding an LM system</span>
+              <span class="tag">Training, data &amp; adaptation</span>
+              <span class="tag">Inference systems</span>
+              <span class="tag">CUDA &amp; accelerators</span>
+              <span class="tag">Distributed ML</span>
+              <span class="tag">Application architecture</span>
+              <span class="tag">Architectural alternatives</span>
+              <span class="tag">Decisions &amp; operations</span>
+              <span class="tag">Field reference</span>
+            </div>
+          </details>
           <div class="cta">
             <a class="btn primary" href="https://ykirpichev.github.io/llm-book-site/">Start reading →</a>
             <a class="btn" href="https://ykirpichev.github.io/llm-book-site/engineering-large-language-models.pdf">Download PDF</a>
@@ -270,8 +288,27 @@
         </div>
       </div>
 
-      <div class="subhead">Studies</div>
-      <div class="grid3">
+      <div class="section-head" id="studies">
+        <h2>Studies</h2>
+        <p>Grouped by topic.</p>
+      </div>
+
+      <div class="subhead">RL and distillation on TPU v6e</div>
+      <div class="grid2">
+        <a class="card" href="https://ykirpichev.github.io/mopd-tpu/">
+          <span class="tag">Distillation · TPU v6e</span>
+          <h3>Multi-teacher on-policy distillation on TPU v6e</h3>
+          <p>
+            Multi-teacher on-policy distillation (MOPD) on TPU v6e: one 2B student merges math and
+            instruction-following specialists; beats mixed-reward RL.
+          </p>
+          <div class="metrics">
+            <div class="metric"><b class="c-emerald">17.4%</b><span>AIME pass@1 vs 14.0% Mix-RL (step 60, 2 seeds)</span></div>
+            <div class="metric"><b class="c-sky">31.0%</b><span>IFBench strict vs 27.6% Mix-RL (step 60, 2 seeds)</span></div>
+          </div>
+          <div class="more">Read the study →</div>
+        </a>
+
         <a class="card" href="https://ykirpichev.github.io/async-vs-sync-rl-tpu/">
           <span class="tag">RL optimization · TPU v6e</span>
           <h3>Async vs sync RL rollouts on TPU v6e</h3>
@@ -287,7 +324,10 @@
           </div>
           <div class="more">Read the study →</div>
         </a>
+      </div>
 
+      <div class="subhead">LLM serving and evaluation</div>
+      <div class="grid2">
         <a class="card" href="https://ykirpichev.github.io/tpu-vs-h100-llm-bench/">
           <span class="tag">LLM serving · vLLM · TPU vs GPU</span>
           <h3>TPU v6e vs H100: serving Cosmos3-Super and Qwen3.8-27B</h3>
@@ -319,7 +359,10 @@
           </div>
           <div class="more">Read the report →</div>
         </a>
+      </div>
 
+      <div class="subhead">GPU kernels on Blackwell</div>
+      <div class="grid3">
         <a class="card" href="https://github.com/ykirpichev/dsa_topk_indexer_fp8_h64_d128_topk2048_ps64/blob/main/final_writeup.md">
           <span class="tag">GPU kernels · B200 · MLSys 2026</span>
           <h3>DeepSeek sparse attention kernels on Blackwell</h3>
@@ -408,6 +451,8 @@
         <p>Where to start reading for each topic.</p>
       </div>
 
+      <details class="fold">
+        <summary>Show the reading guide: 4 topics</summary>
       <div class="interests">
         <div class="card interest">
           <div class="icon c-sky">
@@ -445,6 +490,7 @@
           <h3>RL optimization</h3>
           <p>Making RL for reasoning faster: async rollouts, policy staleness, and keeping generators busy.</p>
           <ul class="links">
+            <li><a href="https://ykirpichev.github.io/mopd-tpu/"><span class="n">Study</span>Multi-teacher on-policy distillation on TPU v6e</a></li>
             <li><a href="https://ykirpichev.github.io/async-vs-sync-rl-tpu/"><span class="n">Study</span>Async vs sync GRPO rollouts on TPU v6e</a></li>
             <li><a href="https://github.com/ykirpichev/road-traffic-simulator-env"><span class="n">Project</span>SF traffic simulator RL environment</a></li>
             <li><a href="https://ykirpichev.github.io/llm-book-site/17-reinforcement-learning-for-reasoning-and-tool-use.html"><span class="n">Ch 17</span>RL for reasoning and tool use</a></li>
@@ -466,6 +512,7 @@
           </ul>
         </div>
       </div>
+      </details>
     </div>
   </section>
 </main>
