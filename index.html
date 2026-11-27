@@ -264,14 +264,14 @@
           <h3>Multi-teacher on-policy distillation on TPU v6e</h3>
           <p>
             Merging a math specialist and an instruction-following specialist into one 2B student,
-            compared with GRPO on the same mixed prompts.
+            compared with joint RL, offline distillation and weight merging.
           </p>
           <div class="result">
-            <b>17.4% vs 14.0%</b>
-            <span>AIME pass@1 against mixed-reward RL, with IFBench also ahead (31.0% vs 27.6%)</span>
+            <b>+6 pp</b>
+            <span>from routing on instruction following; offline KD and a task-arithmetic merge match MOPD</span>
           </div>
-          <div class="meta">Nov 2026 · Qwen3.5-2B · 2 seeds × 60 steps · ≈ $295</div>
-          <div class="caveat">The IFEval gain (+1.5 pp) is within noise.</div>
+          <div class="meta">Nov 2026 · Qwen3.5-2B · 4 seeds × 60 steps · ≈ $596</div>
+          <div class="caveat">Same-origin teachers close to the student; the lead over joint RL holds only on IFBench.</div>
           <div class="more">Read the study →</div>
         </a>
 
